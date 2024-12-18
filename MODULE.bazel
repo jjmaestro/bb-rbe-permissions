@@ -3,3 +3,13 @@ module(
     version = "0.0.1",
     bazel_compatibility = [">=7.4.0"],
 )
+
+bazel_dep(name = "toolchains_buildbuddy", dev_dependency = True)
+git_override(
+    module_name = "toolchains_buildbuddy",
+    commit = "3ad658cf81923ed2325870a2aadcc0c80e5792af",
+    remote = "https://github.com/buildbuddy-io/buildbuddy-toolchain",
+)
+
+buildbuddy = use_extension("@toolchains_buildbuddy//:extensions.bzl", "buildbuddy", dev_dependency = True)
+use_repo(buildbuddy, "buildbuddy_toolchain")

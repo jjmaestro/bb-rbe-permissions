@@ -7,3 +7,12 @@ Works:
 ```
 bazel build //example
 ```
+
+## BB RBE with BB toolchain and image:
+
+Works:
+```
+bazel build \
+    --config=remote-bb-linux-x86_64 \
+    //example
+```
