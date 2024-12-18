@@ -15,3 +15,21 @@ build --incompatible_default_to_explicit_init_py
 build --nolegacy_external_runfiles
 build --nobuild_runfile_links
 build --noexperimental_action_cache_store_output_metadata
+
+common:remote --ui_actions_shown 100
+
+# Build Event Service (BES):
+# build events can be uploaded to services like BuildBuddy to get
+# a nice UI and a URL that you can share with others to debug or
+# review the results of a build.
+# https://bazel.build/remote/bep#build-event-service
+build:bes-bb --bes_results_url=https://app.buildbuddy.io/invocation/
+build:bes-bb --bes_backend=grpcs://remote.buildbuddy.io
+build:bes-bb --bes_upload_mode=nowait_for_upload_complete
+
+build:debug --config=bes-bb
+build:debug --verbose_failures
+build:debug --verbose_explanations
+build:debug --explain=/tmp/verbose_explanations
+build:debug --sandbox_debug
+build:debug --subcommands
