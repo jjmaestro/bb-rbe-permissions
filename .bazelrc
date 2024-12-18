@@ -1,0 +1,17 @@
+# /* vim: set filetype=sh : */
+
+common --show_timestamps
+common --progress_in_terminal_title
+common --incompatible_disallow_empty_glob
+common --check_direct_dependencies=off
+
+common:debug --announce_rc
+common:debug --experimental_ui_max_stdouterr_bytes=52428800
+
+build --nostamp
+build --incompatible_strict_action_env
+build --reuse_sandbox_directories
+build --incompatible_default_to_explicit_init_py
+build --nolegacy_external_runfiles
+build --nobuild_runfile_links
+build --noexperimental_action_cache_store_output_metadata
