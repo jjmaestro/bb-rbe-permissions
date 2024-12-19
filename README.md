@@ -40,3 +40,51 @@ Use --verbose_failures to see the command lines of failed build steps.
 (17:33:34) ERROR: Build did NOT complete successfully
 (17:33:34) INFO: Streaming build results to: https://app.buildbuddy.io/invocation/a5342e14-b078-4c15-b21c-39221b314497
 ```
+
+## Fixing permissions:
+
+To fix the permission error I had to set `nonroot-workspace` to `true`:
+```diff
+diff --git a/toolchains/BUILD b/toolchains/BUILD
+index 76791db..30ec585 100644
+--- a/toolchains/BUILD
++++ b/toolchains/BUILD
+@@ -10,6 +10,7 @@ platform(
+     exec_properties = {
+         "OSFamily": "Linux",
+         "container-image": "docker://ghcr.io/jjmaestro/bb-rbe-permissions/debian-rbe@sha256:1f7eb36169deae239f385a6fbabb254f4ede63837b1819df0ac1d1b01020e977",
++        "nonroot-workspace": "true",
+     },
+ )
+ 
+@@ -23,5 +24,6 @@ platform(
+     exec_properties = {
+         "OSFamily": "Linux",
+         "container-image": "docker://ghcr.io/jjmaestro/bb-rbe-permissions/debian-rbe@sha256:931db995e1a3d455e877c36da7b543ee6b83821f8ccc3417dd324bdab7ee3de9",
++        "nonroot-workspace": "true",
+     },
+ )
+```
+
+But then, I got yet-another error:
+```
+bazel build \
+    --config=remote-custom-linux-x86_64 \
+    //example
+
+(20:04:25) INFO: Invocation ID: 79e4e271-4194-448e-84d7-30fe13676ffc
+(20:04:25) INFO: Streaming build results to: https://app.buildbuddy.io/invocation/79e4e271-4194-448e-84d7-30fe13676ffc
+(20:04:25) INFO: Current date is 2024-12-19
+(20:04:25) INFO: Analyzed target //example:example (1 packages loaded, 359 targets configured).
+(20:04:26) ERROR: /Users/jjmaestro/Work/BAZEL/TESTING/bb-rbe-permissions/example/BUILD:3:10: Compiling example/example.cc failed: absolute path inclusion(s) found in rule '//example:example':
+the source file 'example/example.cc' includes the following non-builtin files with absolute paths (if these are builtin files, make sure these paths are in your toolchain):
+  '/usr/lib/gcc/x86_64-linux-gnu/12/include/stddef.h'
+  '/usr/lib/gcc/x86_64-linux-gnu/12/include/stdarg.h'
+  '/usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h'
+Target //example:example failed to build
+Use --verbose_failures to see the command lines of failed build steps.
+(20:04:26) INFO: Elapsed time: 0.404s, Critical Path: 0.29s
+(20:04:26) INFO: 5 processes: 5 internal.
+(20:04:26) ERROR: Build did NOT complete successfully
+(20:04:26) INFO: Streaming build results to: https://app.buildbuddy.io/invocation/79e4e271-4194-448e-84d7-30fe13676ffc
+```
