@@ -7,9 +7,19 @@ module(
 bazel_dep(name = "toolchains_buildbuddy", dev_dependency = True)
 git_override(
     module_name = "toolchains_buildbuddy",
-    commit = "3ad658cf81923ed2325870a2aadcc0c80e5792af",
-    remote = "https://github.com/buildbuddy-io/buildbuddy-toolchain",
+    # TODO: update hash and remote once PRs #39 and #40 land
+    commit = "5d1e2b9687b7093a23e53288300164346361c7a0",
+    remote = "https://github.com/jjmaestro/buildbuddy-toolchain",
 )
 
 buildbuddy = use_extension("@toolchains_buildbuddy//:extensions.bzl", "buildbuddy", dev_dependency = True)
+
+buildbuddy.platform(
+    container_image = "docker://ghcr.io/jjmaestro/bb-rbe-permissions/debian-rbe:latest",
+)
+
+buildbuddy.gcc_toolchain(
+    gcc_version = "12",
+)
+
 use_repo(buildbuddy, "buildbuddy_toolchain")

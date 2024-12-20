@@ -2,6 +2,43 @@
 
 Example Bazel repo to debug BuildBuddy's RBE with a custom Docker image.
 
+## FINAL FIXES
+
+I managed to get the example to build using BuildBuddy's official toolchain
+with a couple of customizations after [chatting with BB] and adding two PRs
+([buildbuddy-toolchain/pull/39] and [buildbuddy-toolchain/pull/40]):
+```starlark
+bazel_dep(name = "toolchains_buildbuddy", dev_dependency = True)
+git_override(
+    module_name = "toolchains_buildbuddy",
+    # TODO: update hash and remote once PRs #39 and #40 land
+    commit = "5d1e2b9687b7093a23e53288300164346361c7a0",
+    remote = "https://github.com/jjmaestro/buildbuddy-toolchain",
+)
+
+buildbuddy = use_extension("@toolchains_buildbuddy//:extensions.bzl", "buildbuddy", dev_dependency = True)
+
+buildbuddy.platform(
+    container_image = "docker://ghcr.io/jjmaestro/bb-rbe-permissions/debian-rbe:latest",
+)
+
+buildbuddy.gcc_toolchain(
+    gcc_version = "12",
+)
+
+use_repo(buildbuddy, "buildbuddy_toolchain")
+```
+
+And now, this works:
+```
+bazel build --config=remote-bb-linux-x86_64 //example
+
+bazel build --config=remote-bb-linux-arm64 //example
+```
+
+<details>
+<summary>OLD debugging steps</summary>
+
 ## Local build: works
 Works:
 ```
@@ -88,3 +125,8 @@ Use --verbose_failures to see the command lines of failed build steps.
 (20:04:26) ERROR: Build did NOT complete successfully
 (20:04:26) INFO: Streaming build results to: https://app.buildbuddy.io/invocation/79e4e271-4194-448e-84d7-30fe13676ffc
 ```
+</details>
+
+[chatting with BB]: https://buildbuddy.slack.com/archives/CUHBFVATU/p1734626772009149
+[buildbuddy-toolchain/pull/39]: https://github.com/buildbuddy-io/buildbuddy-toolchain/pull/39
+[buildbuddy-toolchain/pull/40]: https://github.com/buildbuddy-io/buildbuddy-toolchain/pull/40

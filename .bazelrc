@@ -59,14 +59,6 @@ common:remote-bb-linux-arm64 --config=remote-bb
 common:remote-bb-linux-arm64 --platforms=@toolchains_buildbuddy//platforms:linux_arm64
 common:remote-bb-linux-arm64 --extra_execution_platforms=@toolchains_buildbuddy//platforms:linux_arm64
 
-common:remote-custom-linux-x86_64 --config=remote-bb
-common:remote-custom-linux-x86_64 --platforms=//toolchains:custom_docker_image_amd64
-common:remote-custom-linux-x86_64 --extra_execution_platforms=//toolchains:custom_docker_image_amd64
-
-common:remote-custom-linux-arm64 --config=remote-bb
-common:remote-custom-linux-arm64 --platforms=//toolchains:custom_docker_image_arm64
-common:remote-custom-linux-arm64 --extra_execution_platforms=//toolchains:custom_docker_image_arm64
-
 # NOTE: BB API key in .bazelrc.user
 # build:remote-bb --remote_header=x-buildbuddy-api-key=XXXXXXXXXXXXXXXXXXXX
 try-import .bazelrc.user
